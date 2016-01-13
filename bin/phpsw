@@ -1,0 +1,54 @@
+#!/usr/bin/env php
+<?php
+
+if (!isset($argv[1])) {
+	echo 'Usage: ' . $argv[0] . ' <version>' . PHP_EOL;
+	exit;
+}
+
+switchPhpVersion($argv[1]);
+
+/**
+ * @param string $phpVersion
+ */
+function switchPhpVersion($phpVersion)
+{
+	$currentPhpVersion = getCurrentlyLinkedPhpVersion();
+	if (null !== $currentPhpVersion) {
+		printf('Unlinking php%s...' . PHP_EOL, $currentPhpVersion);
+		system(sprintf('brew unlink php%s 2>/dev/null >&2', $currentPhpVersion));
+	}
+
+	$newPhpVersion = sanitizePhpVersion($phpVersion);
+
+	printf('Linking php%s...' . PHP_EOL, $newPhpVersion);
+	system(sprintf('brew link php%s 2>/dev/null >&2', $newPhpVersion));
+}
+
+/**
+ * @return string|null
+ */
+function getCurrentlyLinkedPhpVersion()
+{
+	$files = glob('/usr/local/Library/LinkedKegs/php*');
+
+	foreach ($files as $file) {
+		if (false === (bool) preg_match('/^php\d{2}$/', basename($file))) {
+			continue;
+		}
+
+		return sanitizePhpVersion(basename($file));
+	}
+
+	return null;
+}
+
+/**
+ * @param string $phpVersion
+ *
+ * @return string
+ */
+function sanitizePhpVersion($phpVersion)
+{
+	return substr(preg_replace('/[^\d]+/', '', $phpVersion), 0, 2);
+}
