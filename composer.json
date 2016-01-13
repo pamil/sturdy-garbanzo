@@ -1,0 +1,16 @@
+{
+    "name": "pamil/sturdy-garbanzo",
+    "description": "Bunch of useful (but not very well documented) PHP tools",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kamil Kokot",
+            "homepage": "http://kamil.kokot.me",
+            "email": "kamil@kokot.me"
+        }
+    ],
+    "bin": [
+        "bin/phpsw",
+        "bin/phpxt"
+    ]
+}
