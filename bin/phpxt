@@ -8,12 +8,12 @@ function toggleXdebug()
 	$xdebugConfigurationFile = findXdebugConfigurationFile();
 
 	if (isXdebugEnabled()) {
-		echo "Disabling Xdebug...\n";
+		echo 'Disabling Xdebug...' . PHP_EOL;
 		disableXdebug($xdebugConfigurationFile);
 		return;
 	}
 
-	echo "Enabling Xdebug...\n";
+	echo 'Enabling Xdebug...' . PHP_EOL;
 	enableXdebug($xdebugConfigurationFile);
 }
 
@@ -52,12 +52,9 @@ function isXdebugEnabled()
  */
 function enableXdebug($xdebugConfigurationFile)
 {
-	$lines = file($xdebugConfigurationFile);
-	foreach ($lines as &$line) {
-		$line = preg_replace('/^([;\s]*)zend_extension/', 'zend_extension', $line);
-	}
-
-	file_put_contents($xdebugConfigurationFile, implode("\n", $lines));
+	manipulateXdebugConfigurationFile($xdebugConfigurationFile, function ($contents) {
+		return preg_replace('/^([;\s]*)zend_extension/m', 'zend_extension', $contents);
+	});
 }
 
 /**
@@ -65,10 +62,16 @@ function enableXdebug($xdebugConfigurationFile)
  */
 function disableXdebug($xdebugConfigurationFile)
 {
-	$lines = file($xdebugConfigurationFile);
-	foreach ($lines as &$line) {
-		$line = preg_replace('/^\s*zend_extension/', '; zend_extension', $line);
-	}
+	manipulateXdebugConfigurationFile($xdebugConfigurationFile, function ($contents) {
+		return preg_replace('/^\s*zend_extension/m', '; zend_extension', $contents);
+	});
+}
 
-	file_put_contents($xdebugConfigurationFile, implode("\n", $lines));
+/**
+ * @param string $xdebugConfigurationFile
+ * @param callable $callback
+ */
+function manipulateXdebugConfigurationFile($xdebugConfigurationFile, callable $callback)
+{
+	file_put_contents($xdebugConfigurationFile, $callback(file_get_contents($xdebugConfigurationFile)));
 }
