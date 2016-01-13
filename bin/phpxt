@@ -1,0 +1,74 @@
+#!/usr/bin/env php
+<?php
+
+toggleXdebug();
+
+function toggleXdebug()
+{
+	$xdebugConfigurationFile = findXdebugConfigurationFile();
+
+	if (isXdebugEnabled()) {
+		echo "Disabling Xdebug...\n";
+		disableXdebug($xdebugConfigurationFile);
+		return;
+	}
+
+	echo "Enabling Xdebug...\n";
+	enableXdebug($xdebugConfigurationFile);
+}
+
+/**
+ * @return string
+ *
+ * @throws \RuntimeException If XDebug configuration file is not found
+ */
+function findXdebugConfigurationFile()
+{
+	$configurationFiles = explode(',', php_ini_scanned_files());
+	foreach ($configurationFiles as $configurationFile) {
+		if (false === strpos($configurationFile, 'xdebug')) {
+			continue;
+		}
+
+		return trim($configurationFile);
+	}
+
+	throw new \RuntimeException(sprintf(
+		'Could not find XDebug configuration file among these ones: %s',
+		implode(', ', $configurationFiles)
+	));
+}
+
+/**
+ * @return bool
+ */
+function isXdebugEnabled()
+{
+	return in_array('xdebug', get_loaded_extensions(), true);
+}
+
+/**
+ * @param string $xdebugConfigurationFile
+ */
+function enableXdebug($xdebugConfigurationFile)
+{
+	$lines = file($xdebugConfigurationFile);
+	foreach ($lines as &$line) {
+		$line = preg_replace('/^([;\s]*)zend_extension/', 'zend_extension', $line);
+	}
+
+	file_put_contents($xdebugConfigurationFile, implode("\n", $lines));
+}
+
+/**
+ * @param string $xdebugConfigurationFile
+ */
+function disableXdebug($xdebugConfigurationFile)
+{
+	$lines = file($xdebugConfigurationFile);
+	foreach ($lines as &$line) {
+		$line = preg_replace('/^\s*zend_extension/', '; zend_extension', $line);
+	}
+
+	file_put_contents($xdebugConfigurationFile, implode("\n", $lines));
+}
