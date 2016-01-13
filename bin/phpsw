@@ -2,8 +2,8 @@
 <?php
 
 if (!isset($argv[1])) {
-	echo 'Usage: ' . $argv[0] . ' <version>' . PHP_EOL;
-	exit;
+    echo 'Usage: ' . $argv[0] . ' <version>' . PHP_EOL;
+    exit;
 }
 
 switchPhpVersion($argv[1]);
@@ -13,16 +13,16 @@ switchPhpVersion($argv[1]);
  */
 function switchPhpVersion($phpVersion)
 {
-	$currentPhpVersion = getCurrentlyLinkedPhpVersion();
-	if (null !== $currentPhpVersion) {
-		printf('Unlinking php%s...' . PHP_EOL, $currentPhpVersion);
-		system(sprintf('brew unlink php%s 2>/dev/null >&2', $currentPhpVersion));
-	}
+    $currentPhpVersion = getCurrentlyLinkedPhpVersion();
+    if (null !== $currentPhpVersion) {
+        printf('Unlinking php%s...' . PHP_EOL, $currentPhpVersion);
+        system(sprintf('brew unlink php%s 2>/dev/null >&2', $currentPhpVersion));
+    }
 
-	$newPhpVersion = sanitizePhpVersion($phpVersion);
+    $newPhpVersion = sanitizePhpVersion($phpVersion);
 
-	printf('Linking php%s...' . PHP_EOL, $newPhpVersion);
-	system(sprintf('brew link php%s 2>/dev/null >&2', $newPhpVersion));
+    printf('Linking php%s...' . PHP_EOL, $newPhpVersion);
+    system(sprintf('brew link php%s 2>/dev/null >&2', $newPhpVersion));
 }
 
 /**
@@ -30,17 +30,17 @@ function switchPhpVersion($phpVersion)
  */
 function getCurrentlyLinkedPhpVersion()
 {
-	$files = glob('/usr/local/Library/LinkedKegs/php*');
+    $files = glob('/usr/local/Library/LinkedKegs/php*');
 
-	foreach ($files as $file) {
-		if (false === (bool) preg_match('/^php\d{2}$/', basename($file))) {
-			continue;
-		}
+    foreach ($files as $file) {
+        if (false === (bool) preg_match('/^php\d{2}$/', basename($file))) {
+            continue;
+        }
 
-		return sanitizePhpVersion(basename($file));
-	}
+        return sanitizePhpVersion(basename($file));
+    }
 
-	return null;
+    return null;
 }
 
 /**
@@ -50,5 +50,5 @@ function getCurrentlyLinkedPhpVersion()
  */
 function sanitizePhpVersion($phpVersion)
 {
-	return substr(preg_replace('/[^\d]+/', '', $phpVersion), 0, 2);
+    return substr(preg_replace('/[^\d]+/', '', $phpVersion), 0, 2);
 }

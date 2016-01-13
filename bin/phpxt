@@ -5,16 +5,16 @@ toggleXdebug();
 
 function toggleXdebug()
 {
-	$xdebugConfigurationFile = findXdebugConfigurationFile();
+    $xdebugConfigurationFile = findXdebugConfigurationFile();
 
-	if (isXdebugEnabled()) {
-		echo 'Disabling Xdebug...' . PHP_EOL;
-		disableXdebug($xdebugConfigurationFile);
-		return;
-	}
+    if (isXdebugEnabled()) {
+        echo 'Disabling Xdebug...' . PHP_EOL;
+        disableXdebug($xdebugConfigurationFile);
+        return;
+    }
 
-	echo 'Enabling Xdebug...' . PHP_EOL;
-	enableXdebug($xdebugConfigurationFile);
+    echo 'Enabling Xdebug...' . PHP_EOL;
+    enableXdebug($xdebugConfigurationFile);
 }
 
 /**
@@ -24,19 +24,19 @@ function toggleXdebug()
  */
 function findXdebugConfigurationFile()
 {
-	$configurationFiles = explode(',', php_ini_scanned_files());
-	foreach ($configurationFiles as $configurationFile) {
-		if (false === strpos($configurationFile, 'xdebug')) {
-			continue;
-		}
+    $configurationFiles = explode(',', php_ini_scanned_files());
+    foreach ($configurationFiles as $configurationFile) {
+        if (false === strpos($configurationFile, 'xdebug')) {
+            continue;
+        }
 
-		return trim($configurationFile);
-	}
+        return trim($configurationFile);
+    }
 
-	throw new \RuntimeException(sprintf(
-		'Could not find XDebug configuration file among these ones: %s',
-		implode(', ', $configurationFiles)
-	));
+    throw new \RuntimeException(sprintf(
+        'Could not find XDebug configuration file among these ones: %s',
+        implode(', ', $configurationFiles)
+    ));
 }
 
 /**
@@ -44,7 +44,7 @@ function findXdebugConfigurationFile()
  */
 function isXdebugEnabled()
 {
-	return in_array('xdebug', get_loaded_extensions(), true);
+    return in_array('xdebug', get_loaded_extensions(), true);
 }
 
 /**
@@ -52,9 +52,9 @@ function isXdebugEnabled()
  */
 function enableXdebug($xdebugConfigurationFile)
 {
-	manipulateXdebugConfigurationFile($xdebugConfigurationFile, function ($contents) {
-		return preg_replace('/^([;\s]*)zend_extension/m', 'zend_extension', $contents);
-	});
+    manipulateXdebugConfigurationFile($xdebugConfigurationFile, function ($contents) {
+        return preg_replace('/^([;\s]*)zend_extension/m', 'zend_extension', $contents);
+    });
 }
 
 /**
@@ -62,9 +62,9 @@ function enableXdebug($xdebugConfigurationFile)
  */
 function disableXdebug($xdebugConfigurationFile)
 {
-	manipulateXdebugConfigurationFile($xdebugConfigurationFile, function ($contents) {
-		return preg_replace('/^\s*zend_extension/m', '; zend_extension', $contents);
-	});
+    manipulateXdebugConfigurationFile($xdebugConfigurationFile, function ($contents) {
+        return preg_replace('/^\s*zend_extension/m', '; zend_extension', $contents);
+    });
 }
 
 /**
@@ -73,5 +73,5 @@ function disableXdebug($xdebugConfigurationFile)
  */
 function manipulateXdebugConfigurationFile($xdebugConfigurationFile, callable $callback)
 {
-	file_put_contents($xdebugConfigurationFile, $callback(file_get_contents($xdebugConfigurationFile)));
+    file_put_contents($xdebugConfigurationFile, $callback(file_get_contents($xdebugConfigurationFile)));
 }
