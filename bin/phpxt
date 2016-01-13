@@ -5,7 +5,12 @@ toggleXdebug();
 
 function toggleXdebug()
 {
-    $xdebugConfigurationFile = findXdebugConfigurationFile();
+    try {
+        $xdebugConfigurationFile = findXdebugConfigurationFile();
+    } catch (\RuntimeException $exception) {
+        echo 'Cannot find configuration file having "xdebug" in its name!' . PHP_EOL;
+        return;
+    }
 
     if (isXdebugEnabled()) {
         echo 'Disabling Xdebug...' . PHP_EOL;
