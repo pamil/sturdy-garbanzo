@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/env php -d xdebug.remote_autostart=0 -d xdebug.remote_enable=0 -d xdebug.profiler_enable=0
 <?php
 
 if (!isset($argv[1])) {
