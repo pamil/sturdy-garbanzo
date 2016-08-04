@@ -21,7 +21,7 @@ If you haven't installed any global binaries, it may be needed to customize your
 by adding Composer binaries path to your `$PATH` environmental variable:
 
 ```sh
-PATH="$PATH:$COMPOSER_HOME/vendor/bin"
+PATH="$PATH:/path/to/your/composer/home/vendor/bin"
 ```
 
 Then just run `source ~/.bashrc` / `source ~/.zshrc` or start a new shell to start using those 
